@@ -5,16 +5,16 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.0</version>
+		<version>2.6.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>springsec</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springsec</name>
-	<description>Demo project for Spring Boot Sec</description>
+	<name>SpringSec</name>
+	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>11</java.version>
 		<vaadin.version>23.1.0</vaadin.version>
 	</properties>
 	<dependencies>
@@ -41,6 +41,21 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.vaadin/vaadin-maven-plugin -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-maven-plugin</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
