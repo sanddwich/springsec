@@ -19,8 +19,4 @@ public class AuthController {
 		return "success";
 	}
 
-//	@PostMapping("/logout")
-//	public String logout() {
-//		re
-//	}
 }
