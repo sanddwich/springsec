@@ -24,10 +24,10 @@ public class AccessRole extends AbstractEntity {
 	@NotEmpty
 	private String description;
 
-	@ManyToMany(mappedBy = "accessRoles", cascade = {CascadeType.ALL})
+	@ManyToMany(mappedBy = "accessRoles", cascade = CascadeType.ALL)
 	private Set<User> users;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
 	  name = "acess_role_privilege_lnk",
 	  joinColumns = {@JoinColumn(name = "access_role_id", referencedColumnName = "id")},

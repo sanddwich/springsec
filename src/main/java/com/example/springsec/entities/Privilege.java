@@ -24,6 +24,6 @@ public class Privilege extends AbstractEntity {
 	@NotEmpty
 	private String description;
 
-	@ManyToMany(mappedBy = "privileges", cascade = {CascadeType.ALL})
+	@ManyToMany(mappedBy = "privileges", cascade = CascadeType.ALL)
 	private Set<AccessRole> roles;
 }
