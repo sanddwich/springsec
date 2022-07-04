@@ -1,5 +1,7 @@
 package com.example.springsec.entities;
 
+import com.example.springsec.model.Role;
+import com.example.springsec.model.Status;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,6 +25,9 @@ public class User extends AbstractEntity {
 	@NotEmpty
 	private String password;
 
+	@NotEmpty
+	private boolean active;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = {
 	  CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
 	})
@@ -32,6 +37,4 @@ public class User extends AbstractEntity {
 	  inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
 	)
 	private Set<AccessRole> accessRoles;
-
-
 }

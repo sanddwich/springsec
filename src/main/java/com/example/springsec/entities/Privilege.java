@@ -14,7 +14,6 @@ import java.util.Set;
   @Index(name="descriptionIndex", columnList = "description")
 })
 public class Privilege extends AbstractEntity {
-
 	@NotEmpty
 	private String name;
 
@@ -26,4 +25,5 @@ public class Privilege extends AbstractEntity {
 
 	@ManyToMany(mappedBy = "privileges", cascade = CascadeType.ALL)
 	private Set<AccessRole> roles;
+
 }
