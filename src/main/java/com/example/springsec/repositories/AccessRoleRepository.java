@@ -5,19 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AccessRoleRepository extends JpaRepository<AccessRole, Integer> {
-    @Override
-    List<AccessRole> findAll();
+public interface AccessRoleRepository extends JpaRepository<AccessRole, Long> {
 
-    @Override
-    AccessRole getById(Integer integer);
-
-    @Override
-    <S extends AccessRole> S save(S entity);
-
-    @Override
-    long count();
-
-    @Override
-    void delete(AccessRole entity);
 }

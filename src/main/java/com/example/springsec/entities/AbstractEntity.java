@@ -3,6 +3,7 @@ package com.example.springsec.entities;
 import lombok.Getter;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -11,6 +12,6 @@ public abstract class AbstractEntity {
 
 	@Id
 	@Getter
-	@GeneratedValue
-	private Integer id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 }

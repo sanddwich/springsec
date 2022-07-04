@@ -27,7 +27,9 @@ public class AccessRole extends AbstractEntity {
 	@ManyToMany(mappedBy = "accessRoles", cascade = CascadeType.ALL)
 	private Set<User> users;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {
+	  CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+	})
 	@JoinTable(
 	  name = "acess_role_privilege_lnk",
 	  joinColumns = {@JoinColumn(name = "access_role_id", referencedColumnName = "id")},

@@ -23,12 +23,15 @@ public class User extends AbstractEntity {
 	@NotEmpty
 	private String password;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {
+	  CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+	})
 	@JoinTable(
-	  name="user_access_role_lnk",
+	  name = "user_access_role_lnk",
 	  joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
 	  inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
 	)
 	private Set<AccessRole> accessRoles;
+
 
 }
