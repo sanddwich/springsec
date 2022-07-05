@@ -1,28 +1,28 @@
 package com.example.springsec.config;
 
-import com.example.springsec.entities.AccessRole;
 import com.example.springsec.entities.Privilege;
-import com.example.springsec.entities.User;
-import com.example.springsec.repositories.UserRepository;
+import com.example.springsec.services.PrivelegeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+//@Component
+//@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DefaultDataSetter {
-    private final UserRepository userRepository;
+    private final PrivelegeService privelegeService;
 
     @Autowired
-    public DefaultDataSetter(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        createUser();
+    public DefaultDataSetter(PrivelegeService privelegeService) {
+        this.privelegeService = privelegeService;
+        createPrivileges();
+        System.out.println("123213321321332213");
     }
 
-    private Set<Privilege> createPrivileges() {
+    public void createPrivileges() {
         Privilege adminPrivilegeRead = new Privilege();
         Privilege adminPrivilegeWrite = new Privilege();
 
@@ -35,34 +35,32 @@ public class DefaultDataSetter {
         adminPrivilegeRead.setDescription("FULL READ");
         adminPrivilegeWrite.setDescription("FULL WRITE");
 
-        return Stream.of(
-                adminPrivilegeRead, adminPrivilegeWrite
-        ).collect(Collectors.toSet());
+        this.privelegeService.save(adminPrivilegeRead);
     }
 
-    private Set<AccessRole> createAccessRoles() {
-        AccessRole adminAccessRole = new AccessRole();
-
-        adminAccessRole.setName("ADMIN");
-        adminAccessRole.setCode("ADMIN");
-        adminAccessRole.setDescription("FULL SUCCESS ROLE");
-        adminAccessRole.setPrivileges(createPrivileges());
-
-        return Stream.of(
-                adminAccessRole
-        ).collect(Collectors.toSet());
-    }
-
-    public void createUser() {
-        User user = new User();
-        user.setUsername("admin");
-        user.setEmail("bck-dkiselev@yandex.ru");
-        user.setActive(true);
-        user.setPassword(passwordEncoder().encode("admin"));
-        user.setAccessRoles(createAccessRoles());
-
-        this.userRepository.save(user);
-    }
+//    private Set<AccessRole> createAccessRoles() {
+//        AccessRole adminAccessRole = new AccessRole();
+//
+//        adminAccessRole.setName("ADMIN");
+//        adminAccessRole.setCode("ADMIN");
+//        adminAccessRole.setDescription("FULL SUCCESS ROLE");
+//        adminAccessRole.setPrivileges(createPrivileges());
+//
+//        return Stream.of(
+//                adminAccessRole
+//        ).collect(Collectors.toSet());
+//    }
+//
+//    public void createUser() {
+//        User user = new User();
+//        user.setUsername("admin");
+//        user.setEmail("bck-dkiselev@yandex.ru");
+//        user.setActive(true);
+//        user.setPassword(passwordEncoder().encode("admin"));
+//        user.setAccessRoles(createAccessRoles());
+//
+//        this.userRepository.save(user);
+//    }
 
     protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
