@@ -37,4 +37,15 @@ public class User extends AbstractEntity {
 	  inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
 	)
 	private Set<AccessRole> accessRoles;
+
+	@Override
+	public String toString() {
+		return "\nUser{" +
+		  "username='" + username + '\'' +
+		  ", email='" + email + '\'' +
+		  ", password='" + password + '\'' +
+		  ", active=" + active +
+		  ", accessRoles=" + accessRoles +
+		  '}';
+	}
 }

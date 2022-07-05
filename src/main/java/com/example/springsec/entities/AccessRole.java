@@ -37,4 +37,14 @@ public class AccessRole extends AbstractEntity {
 	)
 	private Set<Privilege> privileges;
 
+	@Override
+	public String toString() {
+		return "\nAccessRole{" +
+		  "name='" + name + '\'' +
+		  ", code='" + code + '\'' +
+		  ", description='" + description + '\'' +
+		  ", users=" + users +
+		  ", privileges=" + privileges +
+		  '}';
+	}
 }

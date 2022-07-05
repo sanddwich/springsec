@@ -17,6 +17,6 @@ public class SpringSecApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("sadaddsadad");
+		System.out.println("App started!");
 	}
 }

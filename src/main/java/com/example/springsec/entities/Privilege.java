@@ -26,4 +26,13 @@ public class Privilege extends AbstractEntity {
 	@ManyToMany(mappedBy = "privileges", cascade = CascadeType.ALL)
 	private Set<AccessRole> roles;
 
+	@Override
+	public String toString() {
+		return "\nPrivilege{" +
+		  "name='" + name + '\'' +
+		  ", code='" + code + '\'' +
+		  ", description='" + description + '\'' +
+		  ", roles=" + roles +
+		  '}';
+	}
 }
