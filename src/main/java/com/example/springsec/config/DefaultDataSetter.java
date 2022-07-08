@@ -17,78 +17,87 @@ import java.util.stream.Stream;
 
 @Component
 public class DefaultDataSetter {
-	private final UserService userService;
-	private final AccessRoleService accessRoleService;
+    private final UserService userService;
+    private final AccessRoleService accessRoleService;
+    private final PrivilegeService privilegeService;
 
-	private List<Privilege> privilegeList;
-	private List<AccessRole> accessRoleList;
+    private List<Privilege> privilegeList;
+    private List<AccessRole> accessRoleList;
 
-	public DefaultDataSetter(UserService userService, AccessRoleService accessRoleService) {
-		this.userService = userService;
-		this.accessRoleService = accessRoleService;
-		System.out.println("DefaultDataSetter Begin");
-		createPrivileges();
-		createAccessRoles();
-		addRole();
+    public DefaultDataSetter(UserService userService, AccessRoleService accessRoleService, PrivilegeService privilegeService) {
+        this.userService = userService;
+        this.accessRoleService = accessRoleService;
+        this.privilegeService = privilegeService;
+        System.out.println("DefaultDataSetter Begin");
+
+        for (int i = 0; i < 10; i++) {
+            createRolesAndPrivileges();
+        }
 
 //		createUser();
-	}
+    }
 
-	public void addRole() {
-		this.accessRoleService.save(this.accessRoleList.stream().findFirst().get());
-	}
+    public void createRolesAndPrivileges() {
+        createPrivileges();
+        createAccessRoles();
+    }
 
-	public void createPrivileges() {
-		Privilege adminPrivilegeRead = new Privilege();
-		Privilege adminPrivilegeWrite = new Privilege();
 
-		adminPrivilegeRead.setName("ADMIN_READ");
-		adminPrivilegeWrite.setName("ADMIN_WRITE");
+    public void createPrivileges() {
+        Privilege adminPrivilegeRead = new Privilege();
+        Privilege adminPrivilegeWrite = new Privilege();
 
-		adminPrivilegeRead.setCode("ADMIN_READ");
-		adminPrivilegeWrite.setCode("ADMIN_WRITE");
+        adminPrivilegeRead.setName("ADMIN_READ");
+        adminPrivilegeWrite.setName("ADMIN_WRITE");
 
-		adminPrivilegeRead.setDescription("FULL READ");
-		adminPrivilegeWrite.setDescription("FULL WRITE");
+        adminPrivilegeRead.setCode("ADMIN_READ");
+        adminPrivilegeWrite.setCode("ADMIN_WRITE");
 
-		this.privilegeList = Stream.of(
-		  adminPrivilegeRead, adminPrivilegeWrite
-		).collect(Collectors.toList());
-	}
+        adminPrivilegeRead.setDescription("FULL READ");
+        adminPrivilegeWrite.setDescription("FULL WRITE");
 
-	public void createAccessRoles() {
-		AccessRole adminAccessRole = new AccessRole();
+        this.privilegeList = Stream.of(
+                adminPrivilegeRead, adminPrivilegeWrite
+        ).collect(Collectors.toList());
+//
+//        this.privilegeList.forEach(this.privilegeService::save);
+    }
 
-		adminAccessRole.setName("ADMIN");
-		adminAccessRole.setCode("ADMIN");
-		adminAccessRole.setDescription("FULL SUCCESS ROLE");
-		adminAccessRole.setPrivileges(this.privilegeList);
+    public void createAccessRoles() {
+        AccessRole adminAccessRole = new AccessRole();
 
-		this.accessRoleList = Stream.of(
-		  adminAccessRole
-		).collect(Collectors.toList());
-	}
+        adminAccessRole.setName("ADMIN");
+        adminAccessRole.setCode("ADMIN");
+        adminAccessRole.setDescription("FULL SUCCESS ROLE");
+        adminAccessRole.setPrivileges(this.privilegeList);
 
-	public void consoleUserPrint(User user) {
-		System.out.println(user.getClass() + ": " + user.getUsername());
-	}
+        accessRoleList = Stream.of(
+                adminAccessRole
+        ).collect(Collectors.toList());
 
-	public void createUser() {
-		User user = new User();
-		user.setUsername("admin");
-		user.setEmail("bck-dkiselev@yandex.ru");
-		user.setActive(true);
-		user.setPassword(passwordEncoder().encode("admin"));
-		user.setAccessRoles(this.accessRoleList);
+        accessRoleList.forEach(accessRoleService::save);
+    }
 
-		System.out.println("############### Admin user Create...");
-		this.userService.save(user);
+    public void consoleUserPrint(User user) {
+        System.out.println(user.getClass() + ": " + user.getUsername());
+    }
 
-		if (this.userService.findByUsernameOREmail(user))
-			System.out.println("Пользователь: " + user.getUsername() + " создан!");
-	}
+    public void createUser() {
+        User user = new User();
+        user.setUsername("admin");
+        user.setEmail("bck-dkiselev@yandex.ru");
+        user.setActive(true);
+        user.setPassword(passwordEncoder().encode("admin"));
+        user.setAccessRoles(this.accessRoleList);
 
-	protected PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);
-	}
+        System.out.println("############### Admin user Create...");
+        this.userService.save(user);
+
+        if (this.userService.findByUsernameOREmail(user))
+            System.out.println("Пользователь: " + user.getUsername() + " создан!");
+    }
+
+    protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
 }
