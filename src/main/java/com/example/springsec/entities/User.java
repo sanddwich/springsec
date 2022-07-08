@@ -1,12 +1,10 @@
 package com.example.springsec.entities;
 
-import com.example.springsec.model.Role;
-import com.example.springsec.model.Status;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,15 +26,13 @@ public class User extends AbstractEntity {
 	@NotEmpty
 	private boolean active;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {
-	  CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
-	})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	@JoinTable(
 	  name = "user_access_role_lnk",
 	  joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
 	  inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
 	)
-	private Set<AccessRole> accessRoles;
+	private List<AccessRole> accessRoles;
 
 	@Override
 	public String toString() {

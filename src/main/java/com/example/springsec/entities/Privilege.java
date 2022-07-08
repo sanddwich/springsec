@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -24,7 +24,7 @@ public class Privilege extends AbstractEntity {
 	private String description;
 
 	@ManyToMany(mappedBy = "privileges", cascade = CascadeType.ALL)
-	private Set<AccessRole> roles;
+	private List<AccessRole> roles;
 
 	@Override
 	public String toString() {

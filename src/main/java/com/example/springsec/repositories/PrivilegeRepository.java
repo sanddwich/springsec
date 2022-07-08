@@ -17,4 +17,12 @@ public interface PrivilegeRepository extends JpaRepository<Privilege, Long> {
             "or lower(p.description) like lower(concat('%', :searchTerm, '%')) "
     )
     List<Privilege> search(String searchTerm);
+
+    Privilege findById(Integer id);
+
+    List<Privilege> findByName(String name);
+
+    List<Privilege> findByCode(String code);
+
+    List<Privilege> findByDescription(String description);
 }

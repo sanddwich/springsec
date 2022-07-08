@@ -2,9 +2,23 @@ package com.example.springsec.repositories;
 
 import com.example.springsec.entities.AccessRole;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface AccessRoleRepository extends JpaRepository<AccessRole, Long> {
+	@Query("select ar from AccessRole ar " +
+	  "where lower(ar.name) like lower(concat('%', :searchTerm, '%')) " +
+	  "or lower(ar.code) like lower(concat('%', :searchTerm, '%')) " +
+	  "or lower(ar.description) like lower(concat('%', :searchTerm, '%')) "
+	)
+	List<AccessRole> search(String searchTerm);
 
+	AccessRole findById(Integer id);
+
+	List<AccessRole> findByName(String name);
+
+	List<AccessRole> findByCode(String name);
+
+	List<AccessRole> findByDescription(String name);
 }

@@ -24,16 +24,33 @@ public class UserService implements BaseDataService<User> {
 
 	@Override
 	public List<User> search(String searchTerm) {
-		return null;
+		return this.userRepository.search(searchTerm);
 	}
 
 	@Override
-	public void save(User entity) {
-
+	public void save(User user) {
+		if (!this.findByUsernameOREmail(user))
+			this.userRepository.save(user);
 	}
 
 	@Override
-	public void delete(User entity) throws DataIntegrityViolationException {
+	public void delete(User user) throws DataIntegrityViolationException {
+		this.userRepository.delete(user);
+	}
 
+	public boolean findByUsernameOREmail(User user) {
+		if (
+		  !this.findByUsername(user.getUsername()).isEmpty() || !this.findByEmail(user.getEmail()).isEmpty()
+		) return true;
+
+		return false;
+	}
+
+	public List<User> findByUsername(String username) {
+		return this.userRepository.findByUsername(username);
+	}
+
+	public List<User> findByEmail(String email) {
+		return this.userRepository.findByEmail(email);
 	}
 }

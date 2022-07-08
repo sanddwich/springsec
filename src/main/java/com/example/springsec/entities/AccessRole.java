@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,17 +25,15 @@ public class AccessRole extends AbstractEntity {
 	private String description;
 
 	@ManyToMany(mappedBy = "accessRoles", cascade = CascadeType.ALL)
-	private Set<User> users;
+	private List<User> users;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {
-	  CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
-	})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	@JoinTable(
 	  name = "acess_role_privilege_lnk",
 	  joinColumns = {@JoinColumn(name = "access_role_id", referencedColumnName = "id")},
 	  inverseJoinColumns = {@JoinColumn(name = "privilege_id", referencedColumnName = "id")}
 	)
-	private Set<Privilege> privileges;
+	private List<Privilege> privileges;
 
 	@Override
 	public String toString() {
