@@ -7,6 +7,7 @@ public class WelcomePost {
 	private String hidden;
 	private String DeleteRole;
 	private String DeletePrivilege;
+	private String userinfo;
 
 	@Override
 	public String toString() {

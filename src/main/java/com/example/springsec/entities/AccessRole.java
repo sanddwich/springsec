@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,28 +15,45 @@ import java.util.List;
         @Index(name = "descriptionIndex", columnList = "description")
 })
 public class AccessRole extends AbstractEntity {
+    public AccessRole() {}
+
+    public AccessRole(@NotEmpty String name, @NotEmpty String code, @NotEmpty String description, List<Privilege> privileges) {
+        this.name = name;
+        this.code = code;
+        this.description = description;
+        this.privileges = privileges;
+    }
 
     @NotEmpty
+    @Column(unique = true)
     private String name;
 
     @NotEmpty
+    @Column(unique = true)
     private String code;
 
     @NotEmpty
     private String description;
 
-    @ManyToMany(mappedBy = "accessRoles", cascade = {
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.ALL
     })
+    @JoinTable(
+            name = "user_access_role_lnk",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
     private List<User> users;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+    })
     @JoinTable(
-            name = "acess_role_privilege_lnk",
-            joinColumns = {@JoinColumn(name = "access_role_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "privilege_id", referencedColumnName = "id")}
+            name = "access_role_privilege_lnk",
+            joinColumns = {@JoinColumn(name = "access_role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "privilege_id")}
     )
-    private List<Privilege> privileges;
+    private List<Privilege> privileges = new ArrayList<>();
 
     @Override
     public String toString() {

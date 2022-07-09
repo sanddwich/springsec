@@ -12,6 +12,6 @@ public abstract class AbstractEntity {
 
 	@Id
 	@Getter
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,18 +15,34 @@ import java.util.List;
         @Index(name = "descriptionIndex", columnList = "description")
 })
 public class Privilege extends AbstractEntity {
+    public Privilege() {}
+
+    public Privilege(@NotEmpty String name, @NotEmpty String code, @NotEmpty String description) {
+        this.name = name;
+        this.code = code;
+        this.description = description;
+    }
+
     @NotEmpty
+    @Column(unique = true)
     private String name;
 
     @NotEmpty
+    @Column(unique = true)
     private String code;
 
     @NotEmpty
     private String description;
 
-//    CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
-    @ManyToMany(mappedBy = "privileges")
-    private List<AccessRole> roles;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+    })
+    @JoinTable(
+            name = "access_role_privilege_lnk",
+            joinColumns = {@JoinColumn(name = "privilege_id")},
+            inverseJoinColumns = {@JoinColumn(name = "access_role_id")}
+    )
+    private List<AccessRole> roles = new ArrayList<>();
 
     @Override
     public String toString() {

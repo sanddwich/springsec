@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -13,24 +14,37 @@ import java.util.List;
   @Index(name = "emailIndex", columnList = "email")
 })
 public class User extends AbstractEntity {
+	public User() {}
+
+	public User(@NotEmpty String username, @NotEmpty String email, @NotEmpty String password, @NotEmpty boolean active, List<AccessRole> accessRoles) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.active = active;
+		this.accessRoles = accessRoles;
+	}
 
 	@NotEmpty
+	@Column(unique = true)
 	private String username;
 
 	@NotEmpty
+	@Column(unique = true)
 	private String email;
 
 	@NotEmpty
 	private String password;
 
-	@NotEmpty
+	@NotNull
 	private boolean active;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {
+			CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+	})
 	@JoinTable(
 	  name = "user_access_role_lnk",
-	  joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-	  inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
+	  joinColumns = {@JoinColumn(name = "user_id")},
+	  inverseJoinColumns = {@JoinColumn(name = "role_id")}
 	)
 	private List<AccessRole> accessRoles;
 

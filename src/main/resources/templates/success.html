@@ -6,6 +6,11 @@
 </head>
 <body>
     <h1 style="{color:darkblue;}">SuccessLogin!!!</h1>
+    <div style="width: 100%; padding-bottom: 30px">
+        <form class="form-signin" method="post" action="/auth/userinfo">
+            <button class="btn btn-lg btn-primary btn-block" type="submit", name="userinfo" value="UserInfo">UserInfo</button>
+        </form>
+    </div>
     <form class="form-signin" method="post" action="/auth/logout">
         <button class="btn btn-lg btn-primary btn-block" type="submit">logout</button>
     </form>

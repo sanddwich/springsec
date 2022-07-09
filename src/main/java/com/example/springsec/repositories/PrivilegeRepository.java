@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PrivilegeRepository extends JpaRepository<Privilege, Long> {
+public interface PrivilegeRepository extends JpaRepository<Privilege, Integer> {
     @Query("select p from Privilege p " +
             "where lower(p.name) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(p.code) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(p.description) like lower(concat('%', :searchTerm, '%')) "
     )
     List<Privilege> search(String searchTerm);
-
-    Privilege findById(Integer id);
 
     List<Privilege> findByName(String name);
 
