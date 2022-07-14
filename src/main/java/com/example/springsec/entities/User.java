@@ -14,7 +14,8 @@ import java.util.List;
   @Index(name = "emailIndex", columnList = "email")
 })
 public class User extends AbstractEntity {
-	public User() {}
+	public User() {
+	}
 
 	public User(@NotEmpty String username, @NotEmpty String email, @NotEmpty String password, @NotEmpty boolean active, List<AccessRole> accessRoles) {
 		this.username = username;
@@ -38,9 +39,9 @@ public class User extends AbstractEntity {
 	@NotNull
 	private boolean active;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = {
-			CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
-	})
+	@ManyToMany(fetch = FetchType.LAZY
+//	  cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
+	)
 	@JoinTable(
 	  name = "user_access_role_lnk",
 	  joinColumns = {@JoinColumn(name = "user_id")},

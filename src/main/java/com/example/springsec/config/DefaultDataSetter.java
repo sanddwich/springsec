@@ -9,57 +9,141 @@ import com.example.springsec.services.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 public class DefaultDataSetter {
-    private final UserService userService;
+	private final UserService userService;
+	private final PrivilegeService privilegeService;
+	private final AccessRoleService accessRoleService;
 
-    private List<Privilege> privilegeList;
-    private List<AccessRole> accessRoleList;
+	private User adminUser = new User(
+	  "admin", "admin@springsec.ru", passwordEncoder().encode("admin"),
+	  true, Collections.emptyList()
+	);
 
-    public DefaultDataSetter(UserService userService) {
-        this.userService = userService;
-        System.out.println("DefaultDataSetter Begin");
+	private User simpleUser = new User(
+	  "user", "user@springsec.ru", passwordEncoder().encode("user"),
+	  true, Collections.emptyList()
+	);
 
-        addDefaultAdmin();
+	private List<Privilege> privilegeList = Stream.of(
+	  new Privilege("REST_API_GET", "REST_API_GET", "REST API GET"),
+	  new Privilege("REST_API_POST", "REST_API_POST", "REST API POST"),
+	  new Privilege("REST_API_UPDATE", "REST_API_UPDATE", "REST API UPDATE"),
+	  new Privilege("REST_API_DELETE", "REST_API_DELETE", "REST API DELETE")
+	).collect(Collectors.toList());
 
-        System.out.println("############### Admin user Created...");
-    }
+	private List<AccessRole> accessRoleList = Stream.of(
+	  new AccessRole("ADMIN", "ADMIN", "FULL SUCCESS ROLE", this.privilegeList)
+	).collect(Collectors.toList());
 
-    public void addDefaultAdmin() {
-        createPrivileges();
-        createAccessRoles();
-        createUser();
-    }
+	public DefaultDataSetter(
+	  UserService userService,
+	  PrivilegeService privilegeService,
+	  AccessRoleService accessRoleService
+	) {
+		this.userService = userService;
+		this.privilegeService = privilegeService;
+		this.accessRoleService = accessRoleService;
+		System.out.println("DefaultDataSetter Begin");
 
-    public void createPrivileges() {
-        this.privilegeList = Stream.of(
-                new Privilege("ADMIN_READ", "ADMIN_READ", "FULL READ"),
-                new Privilege("ADMIN_WRITE", "ADMIN_WRITE", "FULL WRITE")
-        ).collect(Collectors.toList());
-    }
+		this.createUsers();
 
-    public void createAccessRoles() {
-        this.accessRoleList = Stream.of(
-                new AccessRole("ADMIN", "ADMIN", "FULL SUCCESS ROLE", this.privilegeList)
-        ).collect(Collectors.toList());
-    }
+		System.out.println("############### Default Data Created...");
+	}
 
-    public void createUser() {
-        this.userService.save(
-                new User(
-                        "admin", "bck-dkiselev@yandex.ru", passwordEncoder().encode("admin"),
-                        true, this.accessRoleList
-                )
-        );
-    }
+	public boolean checkUserExist(User user) {
+		return this.userService.findByUsernameOREmail(user);
+	}
 
-    protected PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
+	public void createUsers() {
+		if (!checkUserExist(this.adminUser)) createAdmin();
+		if (!checkUserExist(this.simpleUser)) createUser();
+	}
+
+	public void createAdmin() {
+		createAdminPrivileges();
+		createAdminAccessRoles();
+		createAdminUser();
+	}
+
+	public void createUser() {
+		createPrivileges();
+		createAccessRoles();
+		createSimpleUser();
+	}
+
+	public void createAdminPrivileges() {
+		this.privilegeList.stream()
+		  .peek(this.privilegeService::save)
+		  .filter(this::privilegeIsExist)
+		  .map(this::getDBPrivilegeByCode)
+		  .collect(Collectors.toList());
+	}
+
+	public void createPrivileges() {
+		String code = "REST_API_GET";
+		this.privilegeList = Stream.of(
+		  this.privilegeService.findByCode(code).stream().findFirst().get()
+		).collect(Collectors.toList());
+	}
+
+	public void createAdminAccessRoles() {
+		this.accessRoleList.stream()
+		  .peek(this.accessRoleService::save)
+		  .filter(this::accessRoleIsExist)
+		  .map(this::getDBAccessRoleByCode)
+		  .collect(Collectors.toList());
+	}
+
+	public void createAccessRoles() {
+		this.accessRoleList = Stream.of(
+		  new AccessRole("USER", "USER", "USER ACCESS", this.privilegeList)
+		)
+		  .peek(this.accessRoleService::save)
+		  .filter(this::accessRoleIsExist)
+		  .map(this::getDBAccessRoleByCode)
+		  .collect(Collectors.toList());
+	}
+
+	public void createAdminUser() {
+		this.adminUser.setAccessRoles(this.accessRoleList);
+		this.userService.save(this.adminUser);
+	}
+
+	public void createSimpleUser() {
+		this.simpleUser.setAccessRoles(this.accessRoleList);
+		this.userService.save(this.simpleUser);
+	}
+
+	public Privilege getDBPrivilegeByCode(Privilege privilege) {
+		return this.privilegeService.findByCode(privilege.getCode()).stream().findFirst().get();
+	}
+
+	public boolean privilegeIsExist(Privilege privilege) {
+		if (!this.privilegeService.findByCode(privilege.getCode()).isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+
+	public AccessRole getDBAccessRoleByCode(AccessRole accessRole) {
+		return this.accessRoleService.findByCode(accessRole.getCode()).stream().findFirst().get();
+	}
+
+	public boolean accessRoleIsExist(AccessRole accessRole) {
+		if (!this.accessRoleService.findByCode(accessRole.getCode()).isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+
+	protected PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(12);
+	}
 }
