@@ -3,9 +3,13 @@ package com.example.springsec.config;
 import com.example.springsec.entities.AccessRole;
 import com.example.springsec.entities.Privilege;
 import com.example.springsec.entities.User;
+import com.example.springsec.security.SecurityUser;
 import com.example.springsec.services.AccessRoleService;
 import com.example.springsec.services.PrivilegeService;
 import com.example.springsec.services.UserService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -32,6 +36,7 @@ public class DefaultDataSetter {
 	);
 
 	private List<Privilege> privilegeList = Stream.of(
+	  new Privilege("SECURE_PAGE", "SECURE_PAGE", "SECURE PAGE"),
 	  new Privilege("REST_API_GET", "REST_API_GET", "REST API GET"),
 	  new Privilege("REST_API_POST", "REST_API_POST", "REST API POST"),
 	  new Privilege("REST_API_UPDATE", "REST_API_UPDATE", "REST API UPDATE"),
@@ -53,8 +58,13 @@ public class DefaultDataSetter {
 		System.out.println("DefaultDataSetter Begin");
 
 		this.createUsers();
+//		this.authorization();
 
 		System.out.println("############### Default Data Created...");
+	}
+
+	public void authorization() {
+
 	}
 
 	public boolean checkUserExist(User user) {
@@ -63,7 +73,10 @@ public class DefaultDataSetter {
 
 	public void createUsers() {
 		if (!checkUserExist(this.adminUser)) createAdmin();
+		this.adminUser = this.userService.findByUsername(this.adminUser.getUsername()).stream().findFirst().get();
+
 		if (!checkUserExist(this.simpleUser)) createUser();
+		this.simpleUser = this.userService.findByUsername(this.adminUser.getUsername()).stream().findFirst().get();
 	}
 
 	public void createAdmin() {

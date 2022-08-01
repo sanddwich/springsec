@@ -5,11 +5,13 @@ import com.example.springsec.entities.Privilege;
 import com.example.springsec.model.WelcomePost;
 import com.example.springsec.services.AccessRoleService;
 import com.example.springsec.services.PrivilegeService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/welcome")
 public class WelcomeController {
 	private final PrivilegeService privilegeService;
 	private final AccessRoleService accessRoleService;
@@ -22,6 +24,7 @@ public class WelcomeController {
 	}
 
 	@GetMapping("/get")
+	@PreAuthorize("hasAuthority('SECURE_PAGE')")
 	public String getIndexGet() {
 		System.out.println("Welcome Page GET");
 		return "welcome";
@@ -31,6 +34,7 @@ public class WelcomeController {
 	  value = "/post",
 	  produces = "application/json",
 	  method = {RequestMethod.GET, RequestMethod.POST})
+	@PreAuthorize("hasAuthority('SECURE_PAGE')")
 	public String getIndexPost(@ModelAttribute WelcomePost welcomePost, Model model) {
 		this.welcomePost = welcomePost;
 		System.out.println(

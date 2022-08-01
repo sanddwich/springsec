@@ -34,6 +34,7 @@ public class Privilege extends AbstractEntity {
     @NotEmpty
     private String description;
 
+//    @ManyToMany(mappedBy = "privileges", fetch = FetchType.LAZY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "access_role_privilege_lnk",
