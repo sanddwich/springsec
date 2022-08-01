@@ -59,8 +59,15 @@ public class DefaultDataSetter {
 
 		this.createUsers();
 //		this.authorization();
+		this.deleteEntities();
 
 		System.out.println("############### Default Data Created...");
+	}
+
+	private void deleteEntities() {
+		this.privilegeService.delete(
+		  this.privilegeService.findAll().stream().findFirst().get()
+		);
 	}
 
 	public void authorization() {

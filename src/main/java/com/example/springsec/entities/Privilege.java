@@ -35,14 +35,15 @@ public class Privilege extends AbstractEntity {
     @NotEmpty
     private String description;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "access_role_privilege_lnk",
-//            joinColumns = {@JoinColumn(name = "privilege_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "access_role_id")}
-//    )
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "privileges")
     @JsonIgnore
-    @ManyToMany(mappedBy = "privileges")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "access_role_privilege_lnk",
+            joinColumns = {@JoinColumn(name = "privilege_id")},
+            inverseJoinColumns = {@JoinColumn(name = "access_role_id")}
+    )
     private List<AccessRole> roles = new ArrayList<>();
 
     @Override
