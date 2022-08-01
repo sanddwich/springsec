@@ -1,6 +1,5 @@
 package com.example.springsec.config;
 
-import com.example.springsec.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -63,22 +61,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		  .httpBasic();
 	}
 
-	@Bean
-	@Override
-	protected UserDetailsService userDetailsService() {
-		return new InMemoryUserDetailsManager(
-		  User.builder()
-			.username("admin")
-			.password(passwordEncoder().encode("admin"))
-			.authorities(Role.ADMIN.getAuthorities())
-			.build(),
-		  User.builder()
-			.username("user")
-			.password(passwordEncoder().encode("user"))
-			.authorities(Role.USER.getAuthorities())
-			.build()
-		);
-	}
+//	@Bean
+//	@Override
+//	protected UserDetailsService userDetailsService() {
+//		return new InMemoryUserDetailsManager(
+//		  User.builder()
+//			.username("admin")
+//			.password(passwordEncoder().encode("admin"))
+//			.authorities(Role.ADMIN.getAuthorities())
+//			.build(),
+//		  User.builder()
+//			.username("user")
+//			.password(passwordEncoder().encode("user"))
+//			.authorities(Role.USER.getAuthorities())
+//			.build()
+//		);
+//	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {

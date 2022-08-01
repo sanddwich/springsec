@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements BaseDataService<User> {
@@ -52,4 +53,8 @@ public class UserService implements BaseDataService<User> {
     public List<User> findByEmail(String email) {
         return this.userRepository.findByEmail(email);
     }
+
+	public Optional<User> findById(Integer id) {
+        return this.userRepository.findById(id);
+	}
 }

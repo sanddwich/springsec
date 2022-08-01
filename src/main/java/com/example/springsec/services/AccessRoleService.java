@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccessRoleService implements BaseDataService<AccessRole> {
@@ -51,5 +52,9 @@ public class AccessRoleService implements BaseDataService<AccessRole> {
 
 	public void saveAll(List<AccessRole> accessRoleList) {
 
+	}
+
+	public Optional<AccessRole> findById(Integer id) {
+		return this.accessRoleRepository.findById(id);
 	}
 }

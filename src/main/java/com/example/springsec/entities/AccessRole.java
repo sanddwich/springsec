@@ -1,5 +1,6 @@
 package com.example.springsec.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -37,12 +38,14 @@ public class AccessRole extends AbstractEntity {
 	private String description;
 
 //	@ManyToMany(mappedBy = "accessRoles", fetch = FetchType.LAZY)
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-	  name = "user_access_role_lnk",
-	  joinColumns = {@JoinColumn(name = "role_id")},
-	  inverseJoinColumns = {@JoinColumn(name = "user_id")}
-	)
+//	@ManyToMany(fetch = FetchType.LAZY)
+//	@JoinTable(
+//	  name = "user_access_role_lnk",
+//	  joinColumns = {@JoinColumn(name = "role_id")},
+//	  inverseJoinColumns = {@JoinColumn(name = "user_id")}
+//	)
+	@JsonIgnore
+	@ManyToMany(mappedBy = "accessRoles")
 	private List<User> users;
 
 	@ManyToMany(fetch = FetchType.EAGER)

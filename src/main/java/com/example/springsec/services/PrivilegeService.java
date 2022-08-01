@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,5 +60,9 @@ public class PrivilegeService implements BaseDataService<Privilege> {
 
 	public List<Privilege> findByDescription(String description) {
 		return this.privilegeRepository.findByDescription(description);
+	}
+
+	public Optional<Privilege> findById(Integer id) {
+		return this.privilegeRepository.findById(id);
 	}
 }

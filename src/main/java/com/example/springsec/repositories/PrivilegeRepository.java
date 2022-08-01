@@ -23,4 +23,5 @@ public interface PrivilegeRepository extends JpaRepository<Privilege, Integer> {
     List<Privilege> findByCode(String code);
 
     List<Privilege> findByDescription(String description);
+
 }
