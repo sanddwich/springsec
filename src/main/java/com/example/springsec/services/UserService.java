@@ -29,8 +29,13 @@ public class UserService implements BaseDataService<User> {
     }
 
     @Override
-    public void save(User user) {
-        if (!this.findByUsernameOREmail(user)) this.userRepository.save(user);
+    public User save(User user) {
+        if (!this.findByUsernameOREmail(user)) {
+            this.userRepository.save(user);
+            return this.userRepository.findByUsername(user.getUsername()).stream().findFirst().get();
+        }
+
+        return null;
     }
 
     @Override

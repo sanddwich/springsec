@@ -7,6 +7,6 @@ import java.util.List;
 public interface BaseDataService<T> {
 	List<T> findAll();
 	List<T> search(String searchTerm);
-	void save(T entity) ;
+	T save(T entity) ;
 	void delete(T entity) throws DataIntegrityViolationException;
 }

@@ -30,14 +30,18 @@ public class PrivilegeService implements BaseDataService<Privilege> {
 	}
 
 	@Override
-	public void save(Privilege entity) {
-		this.privilegeRepository.save(entity);
+	public Privilege save(Privilege privilege) {
+		if (!this.findPrivilegeByNameOrCode(privilege)) {
+			this.privilegeRepository.save(privilege);
+			return this.privilegeRepository.findByCode(privilege.getCode()).stream().findFirst().get();
+		}
+
+		return null;
 	}
 
 	@Override
 	public void delete(Privilege privilege) throws DataIntegrityViolationException {
-		if (!this.findPrivilegeByNameOrCode(privilege))
-			this.privilegeRepository.delete(privilege);
+		this.privilegeRepository.delete(privilege);
 	}
 
 	public boolean findPrivilegeByNameOrCode(Privilege privilege) {

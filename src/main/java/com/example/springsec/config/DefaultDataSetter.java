@@ -59,7 +59,7 @@ public class DefaultDataSetter {
 
 		this.createUsers();
 //		this.authorization();
-		this.deleteEntities();
+//		this.deleteEntities();
 
 		System.out.println("############### Default Data Created...");
 	}
