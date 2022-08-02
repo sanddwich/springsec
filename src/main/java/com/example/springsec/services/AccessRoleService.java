@@ -29,13 +29,23 @@ public class AccessRoleService implements BaseDataService<AccessRole> {
 	}
 
 	@Override
-	public void save(AccessRole entity) {
-		this.accessRoleRepository.save(entity);
+	public void save(AccessRole accessRole) {
+		if (!this.findAccessRoleByNameOrCode(accessRole))
+			this.accessRoleRepository.save(accessRole);
 	}
 
 	@Override
 	public void delete(AccessRole entity) throws DataIntegrityViolationException {
 		this.accessRoleRepository.delete(entity);
+	}
+
+	public boolean findAccessRoleByNameOrCode(AccessRole accessRole) {
+		if (
+		  !this.accessRoleRepository.findByName(accessRole.getName()).isEmpty() ||
+		    !this.accessRoleRepository.findByCode(accessRole.getCode()).isEmpty()
+		) return true;
+
+		return false;
 	}
 
 	public List<AccessRole> findByName(String name) {
