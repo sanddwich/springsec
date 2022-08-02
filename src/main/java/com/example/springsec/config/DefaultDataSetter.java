@@ -101,7 +101,7 @@ public class DefaultDataSetter {
 	public void createAdminPrivileges() {
 		this.privilegeList.stream()
 		  .peek(this.privilegeService::save)
-		  .filter(this::privilegeIsExist)
+		  .filter(this.privilegeService::findPrivilegeByNameOrCode)
 		  .map(this::getDBPrivilegeByCode)
 		  .collect(Collectors.toList());
 	}
@@ -116,7 +116,7 @@ public class DefaultDataSetter {
 	public void createAdminAccessRoles() {
 		this.accessRoleList.stream()
 		  .peek(this.accessRoleService::save)
-		  .filter(this::accessRoleIsExist)
+		  .filter(this.accessRoleService::findAccessRoleByNameOrCode)
 		  .map(this::getDBAccessRoleByCode)
 		  .collect(Collectors.toList());
 	}
@@ -126,7 +126,7 @@ public class DefaultDataSetter {
 		  new AccessRole("USER", "USER", "USER ACCESS", this.privilegeList)
 		)
 		  .peek(this.accessRoleService::save)
-		  .filter(this::accessRoleIsExist)
+		  .filter(this.accessRoleService::findAccessRoleByNameOrCode)
 		  .map(this::getDBAccessRoleByCode)
 		  .collect(Collectors.toList());
 	}
@@ -145,22 +145,8 @@ public class DefaultDataSetter {
 		return this.privilegeService.findByCode(privilege.getCode()).stream().findFirst().get();
 	}
 
-	public boolean privilegeIsExist(Privilege privilege) {
-		if (!this.privilegeService.findByCode(privilege.getCode()).isEmpty()) {
-			return true;
-		}
-		return false;
-	}
-
 	public AccessRole getDBAccessRoleByCode(AccessRole accessRole) {
 		return this.accessRoleService.findByCode(accessRole.getCode()).stream().findFirst().get();
-	}
-
-	public boolean accessRoleIsExist(AccessRole accessRole) {
-		if (!this.accessRoleService.findByCode(accessRole.getCode()).isEmpty()) {
-			return true;
-		}
-		return false;
 	}
 
 	protected PasswordEncoder passwordEncoder() {
