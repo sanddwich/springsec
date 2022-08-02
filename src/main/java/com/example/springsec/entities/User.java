@@ -1,5 +1,6 @@
 package com.example.springsec.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class User extends AbstractEntity {
 	@Column(unique = true)
 	private String email;
 
+	@JsonIgnore
 	@NotEmpty
 	private String password;
 

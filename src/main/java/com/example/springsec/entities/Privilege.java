@@ -2,6 +2,8 @@ package com.example.springsec.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -39,6 +41,8 @@ public class Privilege extends AbstractEntity {
 //    @ManyToMany(mappedBy = "privileges")
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
+    @CreatedDate
+    @LastModifiedDate
     @JoinTable(
             name = "access_role_privilege_lnk",
             joinColumns = {@JoinColumn(name = "privilege_id")},
