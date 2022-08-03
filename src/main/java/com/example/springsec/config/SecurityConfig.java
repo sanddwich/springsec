@@ -1,5 +1,6 @@
 package com.example.springsec.config;
 
+import com.example.springsec.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -22,10 +23,11 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final UserDetailsService userDetailsService;
+	private final JwtTokenProvider jwtTokenProvider;
 
-	@Autowired
 	public SecurityConfig(@Qualifier("UserDetailsServiceImpl") UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
+		this.jwtTokenProvider = new JwtTokenProvider(this.userDetailsService);
 	}
 
 //	@Override   //FormLogin
@@ -85,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	protected PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);
+		return new BCryptPasswordEncoder();
 	}
 
 	@Bean

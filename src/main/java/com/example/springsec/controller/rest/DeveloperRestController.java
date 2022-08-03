@@ -35,7 +35,8 @@ public class DeveloperRestController {
 	}
 
 	@GetMapping("/users")
-	@PreAuthorize("hasAuthority('REST_API_GET')")
+//	@PreAuthorize("hasAuthority('REST_API_GET')")
+	@PreAuthorize("hasAuthority('SECURE_PAGE')")
 	public ResponseEntity userList() {
 		try {
 			return ResponseEntity.ok(this.userService.findAll());
