@@ -1,16 +1,19 @@
 package com.example.springsec.config;
 
+import com.example.springsec.security.jwt.JwtConfigurer;
 import com.example.springsec.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,9 +28,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final UserDetailsService userDetailsService;
 	private final JwtTokenProvider jwtTokenProvider;
 
+	private static final String ADMIN_ENDPOINT = "/api/**";
+	private static final String USER_ENDPOINT = "/api/privileges";
+
 	public SecurityConfig(@Qualifier("UserDetailsServiceImpl") UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 		this.jwtTokenProvider = new JwtTokenProvider(this.userDetailsService);
+	}
+
+	@Bean
+	public JwtTokenProvider jwtTokenProviderBean() {
+		return this.jwtTokenProvider;
+	}
+
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
 //	@Override   //FormLogin
@@ -54,14 +71,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override   //REST
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+		  .httpBasic().disable()
 		  .csrf().disable()
+		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		  .and()
 		  .authorizeRequests()
 		  .antMatchers("/").permitAll()
-		  .anyRequest()
-		  .authenticated()
+		  .antMatchers("/api/auth/login").permitAll()
+		  .anyRequest().authenticated()
 		  .and()
-		  .httpBasic();
+		  .apply(new JwtConfigurer(this.jwtTokenProvider));
 	}
+
+//	@Override   //REST
+//	protected void configure(HttpSecurity http) throws Exception {
+//		http
+//		  .csrf().disable()
+//		  .and()
+//		  .authorizeRequests()
+//		  .antMatchers("/").permitAll()
+//		  .anyRequest()
+//		  .authenticated()
+//		  .and()
+//		  .httpBasic();
+//	}
 
 //	@Bean
 //	@Override

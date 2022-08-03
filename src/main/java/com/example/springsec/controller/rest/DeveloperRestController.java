@@ -3,27 +3,36 @@ package com.example.springsec.controller.rest;
 import com.example.springsec.entities.AccessRole;
 import com.example.springsec.entities.Privilege;
 import com.example.springsec.entities.User;
+import com.example.springsec.security.jwt.JwtTokenProvider;
 import com.example.springsec.services.AccessRoleService;
 import com.example.springsec.services.PrivilegeService;
 import com.example.springsec.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/developer")
 public class DeveloperRestController {
+//	private final AuthenticationManager authenticationManager;
+//	private final JwtTokenProvider jwtTokenProvider;
+
 	private final PrivilegeService privilegeService;
 	private final AccessRoleService accessRoleService;
 	private final UserService userService;
 
 	public DeveloperRestController(
+//	  AuthenticationManager authenticationManager,
+//	  JwtTokenProvider jwtTokenProvider,
 	  PrivilegeService privilegeService,
 	  AccessRoleService accessRoleService,
 	  UserService userService
 	) {
+//		this.authenticationManager = authenticationManager;
+//		this.jwtTokenProvider = jwtTokenProvider;
 		this.privilegeService = privilegeService;
 		this.accessRoleService = accessRoleService;
 		this.userService = userService;
@@ -35,8 +44,8 @@ public class DeveloperRestController {
 	}
 
 	@GetMapping("/users")
-//	@PreAuthorize("hasAuthority('REST_API_GET')")
-	@PreAuthorize("hasAuthority('SECURE_PAGE')")
+	@PreAuthorize("hasAuthority('REST_API_GET')")
+//	@PreAuthorize("hasAuthority('SECURE_PAGE')")
 	public ResponseEntity userList() {
 		try {
 			return ResponseEntity.ok(this.userService.findAll());
