@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -47,6 +48,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	@Override   //REST + FormLogin
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+		  .httpBasic().disable()
+		  .csrf().disable()
+//		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//		  .and()
+		  .authorizeRequests()
+		  .antMatchers("/").permitAll()
+		  .antMatchers("/api/auth/login").permitAll()
+		  .anyRequest().authenticated()
+		  .and()
+		  .formLogin()
+		  .loginPage("/auth/login").permitAll()
+		  .defaultSuccessUrl("/auth/success")
+		  .and()
+		  .apply(new JwtConfigurer(this.jwtTokenProvider)).and()
+		  .logout()
+		  .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
+		  .invalidateHttpSession(true)
+		  .clearAuthentication(true)
+		  .deleteCookies("JSESSIONID")
+		  .logoutSuccessUrl("/auth/login");
+	}
+
 //	@Override   //FormLogin
 //	protected void configure(HttpSecurity http) throws Exception {
 //		http
@@ -68,32 +94,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		  .logoutSuccessUrl("/auth/login");
 //	}
 
-	@Override   //REST
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-		  .httpBasic().disable()
-		  .csrf().disable()
-		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		  .and()
-		  .authorizeRequests()
-		  .antMatchers("/").permitAll()
-		  .antMatchers("/api/auth/login").permitAll()
-		  .anyRequest().authenticated()
-		  .and()
-		  .apply(new JwtConfigurer(this.jwtTokenProvider));
-	}
-
 //	@Override   //REST
 //	protected void configure(HttpSecurity http) throws Exception {
 //		http
+//		  .httpBasic().disable()
 //		  .csrf().disable()
+//		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //		  .and()
 //		  .authorizeRequests()
 //		  .antMatchers("/").permitAll()
-//		  .anyRequest()
-//		  .authenticated()
+//		  .antMatchers("/api/auth/login").permitAll()
+//		  .anyRequest().authenticated()
 //		  .and()
-//		  .httpBasic();
+//		  .apply(new JwtConfigurer(this.jwtTokenProvider));
 //	}
 
 //	@Bean
