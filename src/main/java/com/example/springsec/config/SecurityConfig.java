@@ -29,9 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final UserDetailsService userDetailsService;
 	private final JwtTokenProvider jwtTokenProvider;
 
-//	private static final String ADMIN_ENDPOINT = "/api/**";
-//	private static final String USER_ENDPOINT = "/api/privileges";
-
 	public SecurityConfig(@Qualifier("UserDetailsServiceImpl") UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 		this.jwtTokenProvider = new JwtTokenProvider(this.userDetailsService);
