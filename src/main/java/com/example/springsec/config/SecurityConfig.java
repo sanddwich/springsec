@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,10 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
 	private final UserDetailsService userDetailsService;
 	private final JwtTokenProvider jwtTokenProvider;
@@ -39,103 +39,72 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return this.jwtTokenProvider;
 	}
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+	@Configuration
+	@Order(2)
+	public class FormSecurityConfig extends WebSecurityConfigurerAdapter {
+		@Override   //FormLogin
+		protected void configure(HttpSecurity http) throws Exception {
+			http
+			  .csrf().disable()
+			  .authorizeRequests()
+			  .antMatchers("/").permitAll()
+			  .anyRequest()
+			  .authenticated()
+			  .and()
+			  .formLogin()
+			  .loginPage("/auth/login").permitAll()
+			  .defaultSuccessUrl("/auth/success")
+			  .and()
+			  .logout()
+			  .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
+			  .invalidateHttpSession(true)
+			  .clearAuthentication(true)
+			  .deleteCookies("JSESSIONID")
+			  .logoutSuccessUrl("/auth/login");
+		}
+
+		@Override
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			auth.authenticationProvider(daoAuthenticationProvider());
+		}
+
+		@Bean
+		protected PasswordEncoder passwordEncoder() {
+			return new BCryptPasswordEncoder();
+		}
+
+		@Bean
+		protected DaoAuthenticationProvider daoAuthenticationProvider() {
+			DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+			daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+			daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+			return daoAuthenticationProvider;
+		}
 	}
 
-	@Override   //REST + FormLogin
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-		  .httpBasic().disable()
-		  .csrf().disable()
-		  .authorizeRequests()
-		  .antMatchers("/").permitAll()
-		  .antMatchers("/api/auth/login").permitAll()
-		  .anyRequest().authenticated()
-		  .and()
-		  .apply(new JwtConfigurer(this.jwtTokenProvider)).and()
-		  .formLogin()
-		  .loginPage("/auth/login").permitAll()
-		  .defaultSuccessUrl("/auth/success")
-		  .and()
-		  .logout()
-		  .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
-		  .invalidateHttpSession(true)
-		  .clearAuthentication(true)
-		  .deleteCookies("JSESSIONID")
-		  .logoutSuccessUrl("/auth/login");
+	@Configuration
+	@Order(1)
+	public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
+		@Override   //REST
+		protected void configure(HttpSecurity http) throws Exception {
+			http
+			  .antMatcher("/api/**")
+			  .httpBasic().disable()
+			  .csrf().disable()
+			  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			  .and()
+			  .authorizeRequests()
+			  .antMatchers("/api/auth/login").permitAll()
+			  .anyRequest().authenticated()
+			  .and()
+			  .apply(new JwtConfigurer(jwtTokenProvider));
+		}
+
+		@Bean
+		@Override
+		public AuthenticationManager authenticationManagerBean() throws Exception {
+			return super.authenticationManagerBean();
+		}
 	}
 
-//	@Override   //FormLogin
-//	protected void configure(HttpSecurity http) throws Exception {
-//		http
-//		  .csrf().disable()
-//		  .authorizeRequests()
-//		  .antMatchers("/").permitAll()
-//		  .anyRequest()
-//		  .authenticated()
-//		  .and()
-//		  .formLogin()
-//		  .loginPage("/auth/login").permitAll()
-//		  .defaultSuccessUrl("/auth/success")
-//		  .and()
-//		  .logout()
-//		  .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
-//		  .invalidateHttpSession(true)
-//		  .clearAuthentication(true)
-//		  .deleteCookies("JSESSIONID")
-//		  .logoutSuccessUrl("/auth/login");
-//	}
-
-//	@Override   //REST
-//	protected void configure(HttpSecurity http) throws Exception {
-//		http
-//		  .httpBasic().disable()
-//		  .csrf().disable()
-//		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//		  .and()
-//		  .authorizeRequests()
-//		  .antMatchers("/").permitAll()
-//		  .antMatchers("/api/auth/login").permitAll()
-//		  .anyRequest().authenticated()
-//		  .and()
-//		  .apply(new JwtConfigurer(this.jwtTokenProvider));
-//	}
-
-//	@Bean
-//	@Override
-//	protected UserDetailsService userDetailsService() {
-//		return new InMemoryUserDetailsManager(
-//		  User.builder()
-//			.username("admin")
-//			.password(passwordEncoder().encode("admin"))
-//			.authorities(Role.ADMIN.getAuthorities())
-//			.build(),
-//		  User.builder()
-//			.username("user")
-//			.password(passwordEncoder().encode("user"))
-//			.authorities(Role.USER.getAuthorities())
-//			.build()
-//		);
-//	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(daoAuthenticationProvider());
-	}
-
-	@Bean
-	protected PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	protected DaoAuthenticationProvider daoAuthenticationProvider() {
-		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-		return daoAuthenticationProvider;
-	}
 }
