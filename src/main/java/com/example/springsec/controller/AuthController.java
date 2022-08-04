@@ -26,15 +26,5 @@ public class AuthController {
 	public String getWelcomePage() {
 		return "welcome";
 	}
-//
-//    @RequestMapping(
-//            value = "/userinfo",
-//            produces = "application/json",
-//            method = {RequestMethod.GET, RequestMethod.POST})
-//	public String userInfo(@ModelAttribute WelcomePost welcomePost, Model model) {
-//        this.welcomePost = welcomePost;
-//        System.out.println("Button: " + this.welcomePost.getUserinfo());
-//        return "success";
-//    }
 
 }
