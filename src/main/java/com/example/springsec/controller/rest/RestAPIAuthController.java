@@ -21,12 +21,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthRestController {
+public class RestAPIAuthController {
 	private final AuthenticationManager authenticationManager;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserService userService;
 
-	public AuthRestController(
+	public RestAPIAuthController(
 	  AuthenticationManager authenticationManager,
 	  JwtTokenProvider jwtTokenProvider,
 	  UserService userService

@@ -52,7 +52,7 @@ public class SecurityConfig {
 			  .authenticated()
 			  .and()
 			  .formLogin()
-			  .loginPage("/auth/login").permitAll()
+			  .loginPage("/auth/login1").permitAll()
 			  .defaultSuccessUrl("/auth/success")
 			  .and()
 			  .logout()

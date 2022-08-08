@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 //    WelcomePost welcomePost;
 //
-    @GetMapping("/login")
+    @GetMapping("/login1")
     public String getLoginPage() {
         return "login";
     }
